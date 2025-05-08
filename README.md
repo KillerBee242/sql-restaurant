@@ -112,25 +112,199 @@ Il faut insérer les données dans un ordre qui respecte les clés étrangères 
 SQL
 
 ```
--- Exemples d'insertion
+-- Script SQL pour l'insertion de données fictives dans la base de données du restaurant
+-- IMPORTANT : Assurez-vous que les tables ont été créées avec les bonnes structures et contraintes
+-- (AUTO_INCREMENT pour les IDs, clés étrangères, etc.) avant d'exécuter ce script.
 
--- Clients (Ex: 3 sur 15)
+-- -----------------------------------------------------
+-- Insertion dans la table `Clients` (15 clients)
+-- -----------------------------------------------------
 INSERT INTO Clients (nom, prenom, telephone, adresse) VALUES
-('Dupont', 'Jean', '0612345678', '1 rue de la Paix, Paris'),
-('Martin', 'Alice', '0787654321', '15 avenue des Champs, Lyon'),
-('Diallo', 'Moussa', '0699887766', '5 boulevard de la République, Dakar');
+('Diallo', 'Aïssatou', '771234567', '12 Rue Sandaga, Dakar'),
+('Faye', 'Mamadou', '782345678', 'Avenue Cheikh Anta Diop, Fann'),
+('Ndiaye', 'Bineta', '763456789', 'Cité Keur Gorgui, Dakar'),
+('Sow', 'Ibrahim', '704567890', 'Sicap Liberté 6, Dakar'),
+('Gomez', 'Fatoumata', '775678901', 'Ngor Almadies, Dakar'),
+('Traoré', 'Sekou', '786789012', 'Point E, Dakar'),
+('Cissé', 'Mariama', '767890123', 'Ouakam, Dakar'),
+('Ba', 'Ousmane', '708901234', 'Yoff, Dakar'),
+('Sylla', 'Aminata', '779012345', 'Mermoz, Dakar'),
+('Kante', 'Moussa', '780123456', 'Sacré Coeur, Dakar'),
+('Diouf', 'Adama', '761234560', 'Grand Dakar, Dakar'),
+('Mbaye', 'Khadija', '702345671', 'Pikine, Dakar'),
+('Camara', 'Lamine', '773456782', 'Guediawaye, Dakar'),
+('Thiam', 'Rokhaya', '784567893', 'Rufisque, Dakar'),
+('Fall', 'Cheikh', '765678904', 'Dakar Plateau, Dakar');
 
--- Employes (Ex: 2 sur 5)
+-- -----------------------------------------------------
+-- Insertion dans la table `Employes` (5 employés)
+-- -----------------------------------------------------
 INSERT INTO Employes (nom, prenom, poste, salaire, date_embauche) VALUES
-('Ba', 'Fatou', 'Serveuse', 1800.00, '2023-01-15'),
-('Ndiaye', 'Omar', 'Cuisinier', 2200.00, '2022-11-01');
+('Diop', 'Ousmane', 'Cuisinier Principal', 350000, '2022-08-10'),
+('Sarr', 'Fatou', 'Serveuse', 180000, '2023-03-01'),
+('Gueye', 'Alioune', 'Aide-Cuisinier', 220000, '2023-07-15'),
+('Mbodj', 'Awa', 'Caissière', 190000, '2022-11-05'),
+('Ndour', 'Pape', 'Plongeur', 150000, '2024-01-20');
 
--- Plats (Ex: 4 sur 20)
+-- -----------------------------------------------------
+-- Insertion dans la table `Plats` (20 plats)
+-- -----------------------------------------------------
 INSERT INTO Plats (nom_plat, description, prix, categorie) VALUES
-('Salade César', 'Salade romaine, poulet grillé, croûtons, parmesan', 12.50, 'Entrée'),
-('Thieboudienne', 'Riz au poisson sénégalais', 15.00, 'Plat Principal'),
-('Mousse au Chocolat', 'Mousse légère au chocolat noir', 7.00, 'Dessert'),
-('Jus de Bissap', 'Jus d\'hibiscus frais', 3.50, 'Boisson');-- Commandes (Ex: 2 sur 15) - Assurez-vous que les id_client existentINSERT INTO Commandes (date_commande, heure, mode_paiement, total, id_client) VALUES('2025-04-28', '12:30:00', 'Carte', 27.50, 1), -- Commande de Dupont('2025-04-29', '19:45:00', 'Espèces', 18.50, 3); -- Commande de Diallo-- Reservations (Ex: 2 sur 5) - Assurez-vous que les id_client existentINSERT INTO Reservations (date_reservation, heure, nombre_personnes, id_client) VALUES('2025-05-01', '20:00:00', 4, 2), -- Reservation de Martin('2025-05-03', '13:00:00', 2, 1); -- Reservation de Dupont-- Commande_Plats (Ex: Lier plats aux commandes créées)-- Pour Commande 1 (total 27.50)INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES(1, 1, 1), -- 1x Salade César (12.50)(1, 2, 1); -- 1x Thieboudienne (15.00)-- Pour Commande 2 (total 18.50)INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES(2, 2, 1), -- 1x Thieboudienne (15.00)(2, 4, 1); -- 1x Jus de Bissap (3.50)-- !! Répétez les INSERT avec des données variées pour atteindre les nombres requis !!
+-- Entrées
+('Salade Sénégalaise', 'Salade verte, tomates, concombres, oignons, vinaigrette locale', 2500, 'Entrée'),
+('Pastels au Thon', 'Beignets farcis au thon et épices', 3000, 'Entrée'),
+('Nems aux Crevettes', 'Rouleaux de printemps frits aux crevettes', 3500, 'Entrée'),
+('Soupe Kandia', 'Soupe de gombos avec huile de palme', 2000, 'Entrée'),
+('Accras de Niébé', 'Beignets de haricots cornilles épicés', 2800, 'Entrée'),
+-- Plats Principaux
+('Thieboudienne Poisson', 'Riz rouge au poisson frais et légumes variés', 5500, 'Plat Principal'),
+('Yassa Poulet', 'Poulet mariné au citron et aux oignons, servi avec du riz blanc', 5000, 'Plat Principal'),
+('Mafé Boeuf', 'Ragoût de boeuf à la pâte d''arachide, servi avec du riz', 6000, 'Plat Principal'),
+('Thiof Grillé', 'Mérou grillé, servi avec frites ou alokos et sauce', 7500, 'Plat Principal'),
+('Couscous Sénégalais (Thiéré)', 'Couscous de mil avec sauce légumes et viande', 5800, 'Plat Principal'),
+('Domoda Poisson', 'Poisson mijoté dans une sauce tomate citronnée et moutardée', 5200, 'Plat Principal'),
+('Poulet DG', 'Poulet sauté avec plantains, carottes, poivrons (style camerounais)', 6500, 'Plat Principal'),
+-- Desserts
+('Thiagry', 'Dessert à base de couscous de mil, yaourt et lait caillé sucré', 2500, 'Dessert'),
+('Salade de Fruits Frais', 'Assortiment de fruits de saison', 3000, 'Dessert'),
+('Mousse au Chocolat Noir', 'Mousse onctueuse au chocolat noir', 3500, 'Dessert'),
+('Cinq Centimes', 'Petits beignets sucrés', 1500, 'Dessert'),
+-- Boissons
+('Jus de Bissap', 'Jus de fleurs d''hibiscus', 1500, 'Boisson'),
+('Jus de Gingembre (Gnamakoudji)', 'Jus de gingembre frais et épicé', 1500, 'Boisson'),
+('Jus de Bouye', 'Jus de fruit du baobab (pain de singe)', 2000, 'Boisson'),
+('Eau Minérale (Grand format)', 'Bouteille d''eau minérale 1.5L', 1000, 'Boisson');
+
+-- -----------------------------------------------------
+-- Insertion dans la table `Commandes` (15 commandes)
+-- Les totaux sont calculés ici manuellement pour l'exemple.
+-- Dans un système réel, ils seraient calculés dynamiquement ou via triggers.
+-- -----------------------------------------------------
+-- id_client références de 1 à 15
+INSERT INTO Commandes (date_commande, heure, mode_paiement, total, id_client) VALUES
+('2025-05-05', '12:30:00', 'Mobile', 8500, 1),  -- Commande 1: Thieboudienne (5500) + Bissap (1500) + Pastels (3000) -> Erreur de calcul manuel, ajustons. Total = 10000
+('2025-05-05', '13:15:00', 'Carte', 7000, 2),   -- Commande 2: Yassa (5000) + Bouye (2000)
+('2025-05-06', '19:45:00', 'Espèces', 11000, 3), -- Commande 3: Mafé (6000) + Salade Fruits (3000) + Gingembre (1500) -> Total = 10500
+('2025-05-06', '20:10:00', 'Carte', 7500, 4),   -- Commande 4: Thiof Grillé (7500)
+('2025-05-07', '12:00:00', 'Mobile', 9300, 5),   -- Commande 5: Couscous (5800) + Nems (3500)
+('2025-05-07', '14:00:00', 'Espèces', 10500, 6), -- Commande 6: Poulet DG (6500) + Thiagry (2500) + Eau (1000)
+('2025-05-08', '19:00:00', 'Carte', 5200, 7),   -- Commande 7: Domoda (5200)
+('2025-05-08', '20:30:00', 'Mobile', 9000, 1),   -- Commande 8: Yassa (5000) + Bissap (1500) + Pastels (3000) -> Total = 9500
+('2025-05-09', '12:45:00', 'Espèces', 8000, 8),   -- Commande 9: Mafé (6000) + Bouye (2000)
+('2025-05-09', '13:30:00', 'Carte', 12500, 9),  -- Commande 10: Thiof (7500) + Salade Sen. (2500) + Mousse Choc. (3500) -> Total = 13500
+('2025-05-10', '19:15:00', 'Mobile', 8300, 10),  -- Commande 11: Couscous (5800) + Cinq Centimes (1500) + Eau (1000)
+('2025-05-10', '21:00:00', 'Espèces', 11700, 11), -- Commande 12: Poulet DG (6500) + Accras (2800) + Bissap (1500) + Eau (1000) -> Total = 11800
+('2025-05-11', '12:10:00', 'Carte', 7700, 12),  -- Commande 13: Domoda (5200) + Salade Fruits (3000) -> Total = 8200
+('2025-05-11', '13:05:00', 'Mobile', 14000, 13), -- Commande 14: Thieb (5500) + Yassa (5000) + 2xGingembre (3000)
+('2025-05-12', '20:00:00', 'Espèces', 10000, 14); -- Commande 15: Thiof (7500) + Thiagry (2500)
+
+-- Ajustement des totaux pour les commandes où le calcul manuel initial était erroné
+UPDATE Commandes SET total = 10000 WHERE id_commande = 1;
+UPDATE Commandes SET total = 10500 WHERE id_commande = 3;
+UPDATE Commandes SET total = 9500 WHERE id_commande = 8;
+UPDATE Commandes SET total = 13500 WHERE id_commande = 10;
+UPDATE Commandes SET total = 11800 WHERE id_commande = 12;
+UPDATE Commandes SET total = 8200 WHERE id_commande = 13;
+
+
+-- -----------------------------------------------------
+-- Insertion dans la table `Reservations` (5 réservations)
+-- -----------------------------------------------------
+-- id_client références de 1 à 15
+INSERT INTO Reservations (date_reservation, heure, nombre_personnes, id_client) VALUES
+('2025-05-15', '20:00:00', 4, 2),  -- Reservation 1
+('2025-05-16', '13:00:00', 2, 5),  -- Reservation 2
+('2025-05-17', '19:30:00', 6, 8),  -- Reservation 3
+('2025-05-18', '12:30:00', 3, 11), -- Reservation 4
+('2025-05-19', '20:30:00', 5, 15); -- Reservation 5
+
+-- -----------------------------------------------------
+-- Insertion dans la table `Commande_Plats`
+-- Assurer des commandes avec plusieurs plats et que les id_commande et id_plat existent
+-- -----------------------------------------------------
+-- id_plat références de 1 à 20 (voir liste Plats)
+-- Commande 1 (ID supposé 1, total 10000)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(1, 6, 1),  -- Thieboudienne Poisson (5500)
+(1, 2, 1),  -- Pastels au Thon (3000)
+(1, 17, 1); -- Jus de Bissap (1500)
+
+-- Commande 2 (ID supposé 2, total 7000)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(2, 7, 1),  -- Yassa Poulet (5000)
+(2, 19, 1); -- Jus de Bouye (2000)
+
+-- Commande 3 (ID supposé 3, total 10500)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(3, 8, 1),  -- Mafé Boeuf (6000)
+(3, 14, 1), -- Salade de Fruits Frais (3000)
+(3, 18, 1); -- Jus de Gingembre (1500)
+
+-- Commande 4 (ID supposé 4, total 7500)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(4, 9, 1);  -- Thiof Grillé (7500)
+
+-- Commande 5 (ID supposé 5, total 9300)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(5, 10, 1), -- Couscous Sénégalais (5800)
+(5, 3, 1);  -- Nems aux Crevettes (3500)
+
+-- Commande 6 (ID supposé 6, total 10500)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(6, 12, 1), -- Poulet DG (6500)
+(6, 13, 1), -- Thiagry (2500)
+(6, 20, 1); -- Eau Minérale (1000)
+
+-- Commande 7 (ID supposé 7, total 5200)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(7, 11, 1); -- Domoda Poisson (5200)
+
+-- Commande 8 (ID supposé 8, total 9500)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(8, 7, 1),  -- Yassa Poulet (5000)
+(8, 2, 1),  -- Pastels au Thon (3000)
+(8, 17, 1); -- Jus de Bissap (1500)
+
+-- Commande 9 (ID supposé 9, total 8000)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(9, 8, 1),  -- Mafé Boeuf (6000)
+(9, 19, 1); -- Jus de Bouye (2000)
+
+-- Commande 10 (ID supposé 10, total 13500)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(10, 9, 1),  -- Thiof Grillé (7500)
+(10, 1, 1),  -- Salade Sénégalaise (2500)
+(10, 15, 1); -- Mousse au Chocolat Noir (3500)
+
+-- Commande 11 (ID supposé 11, total 8300)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(11, 10, 1), -- Couscous Sénégalais (5800)
+(11, 16, 1), -- Cinq Centimes (1500)
+(11, 20, 1); -- Eau Minérale (1000)
+
+-- Commande 12 (ID supposé 12, total 11800)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(12, 12, 1), -- Poulet DG (6500)
+(12, 5, 1),  -- Accras de Niébé (2800)
+(12, 17, 1), -- Jus de Bissap (1500)
+(12, 20, 1); -- Eau Minérale (1000)
+
+-- Commande 13 (ID supposé 13, total 8200)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(13, 11, 1), -- Domoda Poisson (5200)
+(13, 14, 1); -- Salade de Fruits Frais (3000)
+
+-- Commande 14 (ID supposé 14, total 14000)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(14, 6, 1),  -- Thieboudienne Poisson (5500)
+(14, 7, 1),  -- Yassa Poulet (5000)
+(14, 18, 2); -- 2x Jus de Gingembre (2 * 1500 = 3000)
+
+-- Commande 15 (ID supposé 15, total 10000)
+INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
+(15, 9, 1),  -- Thiof Grillé (7500)
+(15, 13, 1); -- Thiagry (2500)
+
 ```
 
 ---
