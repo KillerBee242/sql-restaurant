@@ -4,8 +4,6 @@
 
 **A. Modèle Conceptuel (Description du Diagramme Entité-Association)**
 
-Vu que je ne peux pas dessiner directement ici, je vais décrire les entités et relations clés. Imaginez un diagramme avec des boîtes pour les entités et des lignes (ou losanges pour les relations M-N avant transformation) les reliant, avec les cardinalités (le nombre minimum et maximum d'instances liées).
-
 - **Entités :** `Client`, `Commande`, `Plat`, `Employe`, `Reservation`.
 
 - **Relations :**
@@ -114,7 +112,7 @@ Il faut insérer les données dans un ordre qui respecte les clés étrangères 
 SQL
 
 ```
--- Exemples d'insertion (à compléter pour atteindre les quantités demandées)
+-- Exemples d'insertion
 
 -- Clients (Ex: 3 sur 15)
 INSERT INTO Clients (nom, prenom, telephone, adresse) VALUES
@@ -337,4 +335,4 @@ INSERT INTO Plats (nom_plat, description, prix, categorie) VALUES
 
 ---
 
-Ce plan couvre toutes les étapes demandées. N'oubliez pas d'adapter les types de données exacts (`AUTO_INCREMENT` vs `SERIAL`, `CURDATE()` vs `GETDATE()` vs `'YYYY-MM-DD'`, `HOUR()` vs `EXTRACT(HOUR FROM ...)`) en fonction du système de gestion de base de données (MySQL, PostgreSQL, SQL Server, etc.) que vous utiliserez. Bon travail de mise en place !
+Le principe consistera à adapter les types de données exacts (`AUTO_INCREMENT` vs `SERIAL`, `CURDATE()` vs `GETDATE()` vs `'YYYY-MM-DD'`, `HOUR()` vs `EXTRACT(HOUR FROM ...)`) en fonction du système de gestion de base de données (MySQL, PostgreSQL, SQL Server, etc.) utilisé.
