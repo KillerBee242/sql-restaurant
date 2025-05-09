@@ -23,10 +23,8 @@ Basé sur le modèle conceptuel, on définit les tables, leurs colonnes, et les 
 - **Clients** (`id_client` PK, `nom`, `prenom`, `telephone`, `adresse`)
 - **Employes** (`id_employe` PK, `nom`, `prenom`, `poste`, `salaire`, `date_embauche`)
 - **Plats** (`id_plat` PK, `nom_plat`, `description`, `prix`, `categorie`)
-- **Commandes** (`id_commande` PK, `date_commande`, `heure`, `mode_paiement`, `total`, `id_client` FK -> Clients)
-- **Reservations** (`id_reservation` PK, `date_reservation`, `heure`, `nombre_personnes`, `id_client` FK -> Clients)
-- **Commande_Plats** (`id_commande` FK -> Commandes, `id_plat` FK -> Plats, `quantite`)
-  - *Note : La clé primaire de `Commande_Plats` est composite : (`id_commande`, `id_plat`)*
+- **Commandes** (`id_commande` PK, `date_commande`, `quantite`, `heure`, `mode_paiement`, `total`, `id_client`, `id_plat` FK -> Clients, Plats)
+- **Reservations** (`id_reservation` PK, `date_reservation`, `heure`, `nombre_personnes`, `id_client`, `id_employe` FK -> Clients, Employes)
 
 ---
 
@@ -69,11 +67,14 @@ CREATE TABLE Plats (
 CREATE TABLE Commandes (
     id_commande INT PRIMARY KEY AUTO_INCREMENT,
     date_commande DATE NOT NULL,
+    quantite INT NOT NULL,
     heure TIME NOT NULL,
     mode_paiement VARCHAR(50) CHECK (mode_paiement IN ('Carte', 'Espèces', 'Mobile')), -- Exemples de modes
     total DECIMAL(10, 2) NOT NULL CHECK (total >= 0), -- Total positif ou nul
     id_client INT NOT NULL,
-    FOREIGN KEY (id_client) REFERENCES Clients(id_client) ON DELETE RESTRICT -- Empêche suppression client si commande existe
+    id_plat INT NOT NULL,
+    FOREIGN KEY (id_client) REFERENCES Clients(id_client) ON DELETE RESTRICT, -- Empêche suppression client si commande existe
+    FOREIGN KEY (id_plat) REFERENCES Plats(id_plat) ON DELETE RESTRICT -- Empêche suppression plat si commande existe
 );
 
 -- Table Reservations
@@ -83,18 +84,11 @@ CREATE TABLE Reservations (
     heure TIME NOT NULL,
     nombre_personnes INT NOT NULL CHECK (nombre_personnes > 0), -- Au moins 1 personne
     id_client INT NOT NULL,
-    FOREIGN KEY (id_client) REFERENCES Clients(id_client) ON DELETE RESTRICT
+    id_employe INT NOT NULL,
+    FOREIGN KEY (id_client) REFERENCES Clients(id_client) ON DELETE RESTRICT,
+    FOREIGN KEY (id_employe) REFERENCES Employes(id_employe) ON DELETE RESTRICT
 );
 
--- Table Associative Commande_Plats
-CREATE TABLE Commande_Plats (
-    id_commande INT NOT NULL,
-    id_plat INT NOT NULL,
-    quantite INT NOT NULL CHECK (quantite > 0), -- Quantité doit être positive
-    PRIMARY KEY (id_commande, id_plat), -- Clé primaire composite
-    FOREIGN KEY (id_commande) REFERENCES Commandes(id_commande) ON DELETE CASCADE, -- Si commande supprimée, lignes associées aussi
-    FOREIGN KEY (id_plat) REFERENCES Plats(id_plat) ON DELETE RESTRICT -- Empêche suppression plat si dans une commande
-);
 ```
 
 *Remarques sur les contraintes :*
@@ -181,22 +175,22 @@ INSERT INTO Plats (nom_plat, description, prix, categorie) VALUES
 -- Dans un système réel, ils seraient calculés dynamiquement ou via triggers.
 -- -----------------------------------------------------
 -- id_client références de 1 à 15
-INSERT INTO Commandes (date_commande, heure, mode_paiement, total, id_client) VALUES
-('2025-05-05', '12:30:00', 'Mobile', 8500, 1),  -- Commande 1: Thieboudienne (5500) + Bissap (1500) + Pastels (3000) -> Erreur de calcul manuel, ajustons. Total = 10000
-('2025-05-05', '13:15:00', 'Carte', 7000, 2),   -- Commande 2: Yassa (5000) + Bouye (2000)
-('2025-05-06', '19:45:00', 'Espèces', 11000, 3), -- Commande 3: Mafé (6000) + Salade Fruits (3000) + Gingembre (1500) -> Total = 10500
-('2025-05-06', '20:10:00', 'Carte', 7500, 4),   -- Commande 4: Thiof Grillé (7500)
-('2025-05-07', '12:00:00', 'Mobile', 9300, 5),   -- Commande 5: Couscous (5800) + Nems (3500)
-('2025-05-07', '14:00:00', 'Espèces', 10500, 6), -- Commande 6: Poulet DG (6500) + Thiagry (2500) + Eau (1000)
-('2025-05-08', '19:00:00', 'Carte', 5200, 7),   -- Commande 7: Domoda (5200)
-('2025-05-08', '20:30:00', 'Mobile', 9000, 1),   -- Commande 8: Yassa (5000) + Bissap (1500) + Pastels (3000) -> Total = 9500
-('2025-05-09', '12:45:00', 'Espèces', 8000, 8),   -- Commande 9: Mafé (6000) + Bouye (2000)
-('2025-05-09', '13:30:00', 'Carte', 12500, 9),  -- Commande 10: Thiof (7500) + Salade Sen. (2500) + Mousse Choc. (3500) -> Total = 13500
-('2025-05-10', '19:15:00', 'Mobile', 8300, 10),  -- Commande 11: Couscous (5800) + Cinq Centimes (1500) + Eau (1000)
-('2025-05-10', '21:00:00', 'Espèces', 11700, 11), -- Commande 12: Poulet DG (6500) + Accras (2800) + Bissap (1500) + Eau (1000) -> Total = 11800
-('2025-05-11', '12:10:00', 'Carte', 7700, 12),  -- Commande 13: Domoda (5200) + Salade Fruits (3000) -> Total = 8200
-('2025-05-11', '13:05:00', 'Mobile', 14000, 13), -- Commande 14: Thieb (5500) + Yassa (5000) + 2xGingembre (3000)
-('2025-05-12', '20:00:00', 'Espèces', 10000, 14); -- Commande 15: Thiof (7500) + Thiagry (2500)
+INSERT INTO Commandes (date_commande, heure, quantite, mode_paiement, total, id_plat, id_client) VALUES
+('2025-05-05', '12:30:00',3, 'Mobile', 8500, 4, 1),  -- Commande 1: Thieboudienne (5500) + Bissap (1500) + Pastels (3000) -> Erreur de calcul manuel, ajustons. Total = 10000
+('2025-05-05', '13:15:00',2, 'Carte', 7000, 16, 2),   -- Commande 2: Yassa (5000) + Bouye (2000)
+('2025-05-06', '19:45:00',1, 'Espèces', 11000, 4, 3), -- Commande 3: Mafé (6000) + Salade Fruits (3000) + Gingembre (1500) -> Total = 10500
+('2025-05-06', '20:10:00',5, 'Carte', 7500, 18, 4),   -- Commande 4: Thiof Grillé (7500)
+('2025-05-07', '12:00:00',3, 'Mobile', 9300, 2, 5),   -- Commande 5: Couscous (5800) + Nems (3500)
+('2025-05-07', '14:00:00',6, 'Espèces', 10500, 19, 6), -- Commande 6: Poulet DG (6500) + Thiagry (2500) + Eau (1000)
+('2025-05-08', '19:00:00',3, 'Carte', 5200, 17, 7),   -- Commande 7: Domoda (5200)
+('2025-05-08', '20:30:00',5, 'Mobile', 9000, 15, 1),   -- Commande 8: Yassa (5000) + Bissap (1500) + Pastels (3000) -> Total = 9500
+('2025-05-09', '12:45:00',1, 'Espèces', 8000, 13, 8),   -- Commande 9: Mafé (6000) + Bouye (2000)
+('2025-05-09', '13:30:00',4, 'Carte', 12500, 11, 9),  -- Commande 10: Thiof (7500) + Salade Sen. (2500) + Mousse Choc. (3500) -> Total = 13500
+('2025-05-10', '19:15:00',2, 'Mobile', 8300, 9, 10),  -- Commande 11: Couscous (5800) + Cinq Centimes (1500) + Eau (1000)
+('2025-05-10', '21:00:00',2, 'Espèces', 11700, 7, 11), -- Commande 12: Poulet DG (6500) + Accras (2800) + Bissap (1500) + Eau (1000) -> Total = 11800
+('2025-05-11', '12:10:00',4, 'Carte', 7700, 5, 12),  -- Commande 13: Domoda (5200) + Salade Fruits (3000) -> Total = 8200
+('2025-05-11', '13:05:00',3, 'Mobile', 14000, 3, 13), -- Commande 14: Thieb (5500) + Yassa (5000) + 2xGingembre (3000)
+('2025-05-12', '20:00:00',1, 'Espèces', 10000, 1, 14); -- Commande 15: Thiof (7500) + Thiagry (2500)
 
 -- Ajustement des totaux pour les commandes où le calcul manuel initial était erroné
 UPDATE Commandes SET total = 10000 WHERE id_commande = 1;
@@ -211,99 +205,12 @@ UPDATE Commandes SET total = 8200 WHERE id_commande = 13;
 -- Insertion dans la table `Reservations` (5 réservations)
 -- -----------------------------------------------------
 -- id_client références de 1 à 15
-INSERT INTO Reservations (date_reservation, heure, nombre_personnes, id_client) VALUES
-('2025-05-15', '20:00:00', 4, 2),  -- Reservation 1
-('2025-05-16', '13:00:00', 2, 5),  -- Reservation 2
-('2025-05-17', '19:30:00', 6, 8),  -- Reservation 3
-('2025-05-18', '12:30:00', 3, 11), -- Reservation 4
-('2025-05-19', '20:30:00', 5, 15); -- Reservation 5
-
--- -----------------------------------------------------
--- Insertion dans la table `Commande_Plats`
--- Assurer des commandes avec plusieurs plats et que les id_commande et id_plat existent
--- -----------------------------------------------------
--- id_plat références de 1 à 20 (voir liste Plats)
--- Commande 1 (ID supposé 1, total 10000)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(1, 6, 1),  -- Thieboudienne Poisson (5500)
-(1, 2, 1),  -- Pastels au Thon (3000)
-(1, 17, 1); -- Jus de Bissap (1500)
-
--- Commande 2 (ID supposé 2, total 7000)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(2, 7, 1),  -- Yassa Poulet (5000)
-(2, 19, 1); -- Jus de Bouye (2000)
-
--- Commande 3 (ID supposé 3, total 10500)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(3, 8, 1),  -- Mafé Boeuf (6000)
-(3, 14, 1), -- Salade de Fruits Frais (3000)
-(3, 18, 1); -- Jus de Gingembre (1500)
-
--- Commande 4 (ID supposé 4, total 7500)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(4, 9, 1);  -- Thiof Grillé (7500)
-
--- Commande 5 (ID supposé 5, total 9300)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(5, 10, 1), -- Couscous Sénégalais (5800)
-(5, 3, 1);  -- Nems aux Crevettes (3500)
-
--- Commande 6 (ID supposé 6, total 10500)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(6, 12, 1), -- Poulet DG (6500)
-(6, 13, 1), -- Thiagry (2500)
-(6, 20, 1); -- Eau Minérale (1000)
-
--- Commande 7 (ID supposé 7, total 5200)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(7, 11, 1); -- Domoda Poisson (5200)
-
--- Commande 8 (ID supposé 8, total 9500)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(8, 7, 1),  -- Yassa Poulet (5000)
-(8, 2, 1),  -- Pastels au Thon (3000)
-(8, 17, 1); -- Jus de Bissap (1500)
-
--- Commande 9 (ID supposé 9, total 8000)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(9, 8, 1),  -- Mafé Boeuf (6000)
-(9, 19, 1); -- Jus de Bouye (2000)
-
--- Commande 10 (ID supposé 10, total 13500)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(10, 9, 1),  -- Thiof Grillé (7500)
-(10, 1, 1),  -- Salade Sénégalaise (2500)
-(10, 15, 1); -- Mousse au Chocolat Noir (3500)
-
--- Commande 11 (ID supposé 11, total 8300)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(11, 10, 1), -- Couscous Sénégalais (5800)
-(11, 16, 1), -- Cinq Centimes (1500)
-(11, 20, 1); -- Eau Minérale (1000)
-
--- Commande 12 (ID supposé 12, total 11800)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(12, 12, 1), -- Poulet DG (6500)
-(12, 5, 1),  -- Accras de Niébé (2800)
-(12, 17, 1), -- Jus de Bissap (1500)
-(12, 20, 1); -- Eau Minérale (1000)
-
--- Commande 13 (ID supposé 13, total 8200)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(13, 11, 1), -- Domoda Poisson (5200)
-(13, 14, 1); -- Salade de Fruits Frais (3000)
-
--- Commande 14 (ID supposé 14, total 14000)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(14, 6, 1),  -- Thieboudienne Poisson (5500)
-(14, 7, 1),  -- Yassa Poulet (5000)
-(14, 18, 2); -- 2x Jus de Gingembre (2 * 1500 = 3000)
-
--- Commande 15 (ID supposé 15, total 10000)
-INSERT INTO Commande_Plats (id_commande, id_plat, quantite) VALUES
-(15, 9, 1),  -- Thiof Grillé (7500)
-(15, 13, 1); -- Thiagry (2500)
+INSERT INTO Reservations (date_reservation, heure, nombre_personnes, id_client, id_employe) VALUES
+('2025-05-15', '20:00:00', 4, 2, 1),  -- Reservation 1
+('2025-05-16', '13:00:00', 2, 5, 2),  -- Reservation 2
+('2025-05-17', '19:30:00', 6, 8, 3),  -- Reservation 3
+('2025-05-18', '12:30:00', 3, 11, 4), -- Reservation 4
+('2025-05-19', '20:30:00', 5, 15, 5); -- Reservation 5
 
 ```
 
